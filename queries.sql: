@@ -1,0 +1,38 @@
+-- 1. Топ-10 стран по активности
+SELECT country, COUNT(*) AS events_count
+FROM events
+GROUP BY country
+ORDER BY events_count DESC
+LIMIT 10;
+
+-- 2. Распределение типов событий
+SELECT event_type, COUNT(*) AS cnt
+FROM events
+GROUP BY event_type
+ORDER BY cnt DESC;
+
+-- 3. Выручка по странам (только purchase)
+SELECT country, SUM(amount) AS revenue
+FROM events
+WHERE event_type = 'purchase'
+GROUP BY country
+ORDER BY revenue DESC;
+
+-- 4. Активность по часам
+SELECT HOUR(ts) AS hour, COUNT(*) AS cnt
+FROM events
+GROUP BY HOUR(ts)
+ORDER BY hour;
+
+-- 5. Уникальные пользователи по странам
+SELECT country, COUNT(DISTINCT user_id) AS unique_users
+FROM events
+GROUP BY country
+ORDER BY unique_users DESC;
+
+-- 6. Воронка: view -> click -> purchase
+SELECT
+  SUM(CASE WHEN event_type = 'view' THEN 1 ELSE 0 END) AS views,
+  SUM(CASE WHEN event_type = 'click' THEN 1 ELSE 0 END) AS clicks,
+  SUM(CASE WHEN event_type = 'purchase' THEN 1 ELSE 0 END) AS purchases
+FROM events;
