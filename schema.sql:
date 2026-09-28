@@ -1,0 +1,26 @@
+-- Создание базы
+CREATE DATABASE IF NOT EXISTS analytics;
+USE analytics;
+
+-- Внешняя таблица событий
+CREATE EXTERNAL TABLE IF NOT EXISTS events (
+  user_id INT,
+  country STRING,
+  event_type STRING,
+  page STRING,
+  ts TIMESTAMP,
+  amount DOUBLE
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE
+LOCATION '/data/events/';
+
+-- Партиционированная таблица
+CREATE TABLE IF NOT EXISTS events_partitioned (
+  user_id INT,
+  event_type STRING,
+  amount DOUBLE
+)
+PARTITIONED BY (country STRING, dt STRING)
+STORED AS PARQUET;
